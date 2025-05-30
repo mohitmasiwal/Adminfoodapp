@@ -54,50 +54,50 @@ function App() {
   return (
     <Router>
       <Header />
-      <Routes>
-        <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
-        <Route path="/signup" element={isLoggedIn ? <Navigate to="/" /> : <Signup />} />
-        <Route path="/recipee" element={<Recipee />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/orders" element={<Orders />} />
+       <Routes>
+  <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
+  <Route path="/signup" element={isLoggedIn ? <Navigate to="/" /> : <Signup />} />
+  <Route path="/recipee" element={<Recipee />} />
+  <Route path="/cart" element={<Cart />} />
+  <Route path="/orders" element={<Orders />} />
 
-        <Route
-          path="/admin"
-          element={
-            isLoggedIn && role === "admin" ? <Admin /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/user"
-          element={
-            isLoggedIn && role === "user" ? <UserPage /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/user/profile"
-          element={
-            isLoggedIn && role === "user" ? <User /> : <Navigate to="/login" replace />
-          }
-        />
+  {/* ✅ Public route */}
+  <Route path="/user" element={<UserPage />} />
 
-        {/* Default redirection */}
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              role === "admin" ? (
-                <Navigate to="/admin" replace />
-              ) : (
-                <Navigate to="/user" replace />
-              )
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
+  {/* ✅ Protected admin route */}
+  <Route
+    path="/admin"
+    element={
+      isLoggedIn && role === "admin" ? <Admin /> : <Navigate to="/login" replace />
+    }
+  />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+  <Route
+    path="/user/profile"
+    element={
+      isLoggedIn && role === "user" ? <User /> : <Navigate to="/login" replace />
+    }
+  />
+
+  {/* Default redirection */}
+  <Route
+    path="/"
+    element={
+      isLoggedIn ? (
+        role === "admin" ? (
+          <Navigate to="/admin" replace />
+        ) : (
+          <Navigate to="/user" replace />
+        )
+      ) : (
+        <Navigate to="/login" replace />
+      )
+    }
+  />
+
+  <Route path="*" element={<Navigate to="/" replace />} />
+</Routes>
+
       <Footer />
     </Router>
   );

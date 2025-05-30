@@ -16,6 +16,8 @@ const Cart = () => {
   const userOrders = useSelector((state) => state.orders.userOrders || []);
   const loadingOrders = useSelector((state) => state.orders.loading);
   const user = auth.currentUser;
+  console.log(userOrders);
+  
 
   useEffect(() => {
     if (user) {
@@ -119,57 +121,61 @@ const Cart = () => {
         )}
 
         {/* Order History */}
-        <div className="mt-16">
-          <h2 className="text-3xl font-bold mb-4 text-white">📦 Your Order History</h2>
-          {loadingOrders ? (
-            <p className="text-gray-400">Loading orders...</p>
-          ) : userOrders.length === 0 ? (
-            <p className="text-gray-500">You have no previous orders.</p>
-          ) : (
-            <div className="space-y-6">
-              {userOrders.map(({ orderId, items, status }) => (
-                <div
-                  key={orderId}
-                  className="bg-gray-800 border-l-4 border-blue-500 rounded-md p-4"
+      <div className="mt-16">
+  <h2 className="text-3xl font-bold mb-4 text-white">📦 Your Order History</h2>
+  {loadingOrders ? (
+    <p className="text-gray-400">Loading orders...</p>
+  ) : !userOrders || Object.keys(userOrders).length === 0 ? (
+    <p className="text-gray-500">You have no previous orders.</p>
+  ) : (
+    <div className="space-y-6">
+      {Object.entries(userOrders)
+        .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt)) // newest first
+        .map(([orderId, order]) => (
+          <div
+            key={orderId}
+            className="bg-gray-800 border-l-4 border-blue-500 rounded-md p-4"
+          >
+            <div className="flex justify-between mb-2">
+              <p>
+                <strong>Order ID:</strong> {orderId}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                <span
+                  className={`font-bold ${
+                    order.status === "completed"
+                      ? "text-green-400"
+                      : order.status === "pending"
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
                 >
-                  <div className="flex justify-between mb-2">
-                    <p>
-                      <strong>Order ID:</strong> {orderId}
-                    </p>
-                    <p>
-                      <strong>Status:</strong>{" "}
-                      <span
-                        className={`font-bold ${
-                          status === "completed"
-                            ? "text-green-400"
-                            : status === "pending"
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      >
-                        {status}
-                      </span>
-                    </p>
-                  </div>
-                  <div>
-                    {Object.entries(items).map(([id, { item, quantity }]) => (
-                      <div
-                        key={id}
-                        className="flex justify-between text-sm border-b border-gray-700 py-1"
-                      >
-                        <span>{item.name}</span>
-                        <span>
-                          {quantity} × ₹{Number(item.price)} = ₹
-                          {Number(item.price) * quantity}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                  {order.status}
+                </span>
+              </p>
             </div>
-          )}
-        </div>
+            <div>
+              {order.items &&
+                Object.entries(order.items).map(([itemId, { item, quantity }]) => (
+                  <div
+                    key={itemId}
+                    className="flex justify-between text-sm border-b border-gray-700 py-1"
+                  >
+                    <span>{item.name}</span>
+                    <span>
+                      {quantity} × ₹{Number(item.price)} = ₹
+                      {Number(item.price) * quantity}
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        ))}
+    </div>
+  )}
+</div>
+
       </div>
     </div>
   );

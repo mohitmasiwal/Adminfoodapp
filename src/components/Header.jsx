@@ -54,32 +54,33 @@ const Header = () => {
           </Link>
         )}
 
-        {isLoggedIn ? (
-          role === "admin" ? (
-            <Link
-              to="/admin"
-              className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
-            >
-              Admin Panel
-            </Link>
-          ) : (
-            <Link
-              to="/user"
-              className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
-            >
-              User Panel
-            </Link>
-          )
-        ) : (
+        {/* ✅ Always show User Panel */}
+        <Link
+          to="/user"
+          className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
+        >
+          User Panel
+        </Link>
+
+        {/* ✅ Only show Admin Panel if logged in as admin */}
+        {isLoggedIn && role === "admin" && (
+          <Link
+            to="/admin"
+            className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
+          >
+            Admin Panel
+          </Link>
+        )}
+
+        {/* ✅ Login/Logout buttons */}
+        {!isLoggedIn ? (
           <Link
             to="/login"
             className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
           >
             Login
           </Link>
-        )}
-
-        {isLoggedIn && (
+        ) : (
           <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
@@ -89,7 +90,7 @@ const Header = () => {
         )}
       </nav>
 
-      {/* Mobile menu toggle button */}
+      {/* Mobile menu toggle */}
       <button
         className="md:hidden focus:outline-none"
         onClick={() => setMenuOpen(!menuOpen)}
@@ -121,25 +122,28 @@ const Header = () => {
             </Link>
           )}
 
-          {isLoggedIn ? (
-            role === "admin" ? (
-              <Link
-                to="/admin"
-                onClick={() => setMenuOpen(false)}
-                className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 text-center"
-              >
-                Admin Panel
-              </Link>
-            ) : (
-              <Link
-                to="/user"
-                onClick={() => setMenuOpen(false)}
-                className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 text-center"
-              >
-                User Panel
-              </Link>
-            )
-          ) : (
+          {/* ✅ Always show User Panel */}
+          <Link
+            to="/user"
+            onClick={() => setMenuOpen(false)}
+            className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 text-center"
+          >
+            User Panel
+          </Link>
+
+          {/* ✅ Admin only if logged in and admin */}
+          {isLoggedIn && role === "admin" && (
+            <Link
+              to="/admin"
+              onClick={() => setMenuOpen(false)}
+              className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 text-center"
+            >
+              Admin Panel
+            </Link>
+          )}
+
+          {/* ✅ Login/Logout buttons */}
+          {!isLoggedIn ? (
             <Link
               to="/login"
               onClick={() => setMenuOpen(false)}
@@ -147,14 +151,9 @@ const Header = () => {
             >
               Login
             </Link>
-          )}
-
-          {isLoggedIn && (
+          ) : (
             <button
-              onClick={() => {
-                handleLogout();
-                setMenuOpen(false);
-              }}
+              onClick={handleLogout}
               className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
             >
               Logout

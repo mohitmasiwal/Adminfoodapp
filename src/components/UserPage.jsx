@@ -2,6 +2,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories, fetchRecipe } from "../redux/categoriesSlice";
 import { addToCart } from "../redux/CartSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UserPage = () => {
   const dispatch = useDispatch();
@@ -67,7 +69,15 @@ const UserPage = () => {
                 <p className="text-gray-400 text-sm">{item.description}</p>
                 <p className="text-green-400 font-bold mt-2">₹{item.price}</p>
                 <button
-                  onClick={() => dispatch(addToCart({ id, item }))}
+                  onClick={() => {
+                    const token = localStorage.getItem("token");
+                    if (!token) {
+                      toast.info("Please login first to add items to cart.");
+                      return;
+                    }
+                    dispatch(addToCart({ id, item }));
+                    toast.success(`✅ ${item.name} added to cart!`);
+                  }}
                   className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
                 >
                   Add to Cart
@@ -84,38 +94,33 @@ const UserPage = () => {
 
       {/* Recipe Section */}
       <h2 className="text-3xl font-bold mt-16 mb-8 text-center text-white">🔥 Top Recipes</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
         {recipe.map((rec) => (
           <div
             key={rec.id}
             onClick={() => handleRecipeClick(rec.id)}
-            className={`bg-gray-800 rounded-lg shadow-lg p-4 transition-shadow duration-300 cursor-pointer hover:shadow-xl ${
-              expandedRecipeId === rec.id ? "shadow-2xl" : ""
-            }`}
+            className="bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-xl transition cursor-pointer text-center"
           >
             {rec.imageUrl && (
               <img
                 src={rec.imageUrl}
                 alt={rec.name}
-                className="w-full h-48 object-cover rounded-md mb-3"
+                className="w-24 h-24 object-cover rounded-full mx-auto mb-3"
               />
             )}
-            <h3 className="text-xl font-semibold text-white">{rec.name}</h3>
-            <div
-              className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                expandedRecipeId === rec.id ? "max-h-[500px] mt-2" : "max-h-0"
-              }`}
-            >
-              {expandedRecipeId === rec.id && (
-                <>
-                  <p className="text-gray-400 text-sm mt-2">{rec.description}</p>
-                  <p className="text-green-400 font-bold mt-2">₹{rec.price}</p>
-                </>
-              )}
-            </div>
+            <h3 className="text-lg font-semibold text-white">{rec.name}</h3>
+            {expandedRecipeId === rec.id && (
+              <>
+                <p className="text-gray-400 text-sm mt-2">{rec.description}</p>
+                <p className="text-green-400 font-bold mt-2">₹{rec.price}</p>
+              </>
+            )}
           </div>
         ))}
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
     </div>
   );
 };

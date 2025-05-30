@@ -1,12 +1,12 @@
- import React, { useEffect, useState } from 'react';
-import { db } from '../firebase/Firebase';
-import { ref, onValue, update } from 'firebase/database';
+ import React, { useEffect, useState } from "react";
+import { db } from "../firebase/Firebase";
+import { ref, onValue, update } from "firebase/database";
 
 const Orders = () => {
   const [allOrders, setAllOrders] = useState([]);
 
   useEffect(() => {
-    const ordersRef = ref(db, 'orders/');
+    const ordersRef = ref(db, "orders/");
     const unsubscribe = onValue(ordersRef, (snapshot) => {
       const data = snapshot.val();
 
@@ -15,16 +15,11 @@ const Orders = () => {
         return;
       }
 
-      const formattedOrders = [];
-      for (let uid in data) {
-        for (let orderId in data[uid]) {
-          formattedOrders.push({
-            uid,
-            orderId,
-            ...data[uid][orderId],
-          });
-        }
-      }
+      // Each key is orderId (timestamp), each value is the order object
+      const formattedOrders = Object.entries(data).map(([orderId, orderData]) => ({
+        orderId,
+        ...orderData,
+      }));
 
       setAllOrders(formattedOrders);
     });
@@ -32,8 +27,8 @@ const Orders = () => {
     return () => unsubscribe(); // cleanup listener
   }, []);
 
-  const handleStatusUpdate = async (uid, orderId, newStatus) => {
-    const orderRef = ref(db, `orders/${uid}/${orderId}`);
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    const orderRef = ref(db, `orders/${orderId}`);
     await update(orderRef, { status: newStatus });
   };
 
@@ -48,7 +43,10 @@ const Orders = () => {
             <div key={order.orderId} className="bg-white shadow p-4 rounded">
               <p className="font-semibold">User ID: {order.uid}</p>
               <p>Order ID: {order.orderId}</p>
-              <p>Status: <span className="font-medium">{order.status}</span></p>
+              <p>
+                Status:{" "}
+                <span className="font-medium capitalize">{order.status}</span>
+              </p>
               <p>
                 Created At:{" "}
                 {order.createdAt
@@ -59,10 +57,9 @@ const Orders = () => {
                 <p className="font-semibold">Items:</p>
                 {order.items ? (
                   <ul className="list-disc pl-6">
-                    {Object.values(order.items).map((orderItem, index) => (
-                      <li key={index}>
-                        {orderItem.item?.name || "Unknown"} - Qty:{" "}
-                        {orderItem.quantity}
+                    {Object.entries(order.items).map(([id, { item, quantity }]) => (
+                      <li key={id}>
+                        {item?.name || "Unknown"} - Qty: {quantity}
                       </li>
                     ))}
                   </ul>
@@ -72,9 +69,7 @@ const Orders = () => {
               </div>
               <div className="mt-4">
                 <select
-                  onChange={(e) =>
-                    handleStatusUpdate(order.uid, order.orderId, e.target.value)
-                  }
+                  onChange={(e) => handleStatusUpdate(order.orderId, e.target.value)}
                   defaultValue={order.status}
                   className="p-2 border rounded"
                 >
