@@ -29,7 +29,7 @@ const Orders = () => {
       setAllOrders(formattedOrders);
     });
 
-    return () => unsubscribe();  
+    return () => unsubscribe(); // cleanup listener
   }, []);
 
   const handleStatusUpdate = async (uid, orderId, newStatus) => {

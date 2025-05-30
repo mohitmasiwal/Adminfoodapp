@@ -67,7 +67,7 @@ const UserPage = () => {
                 <p className="text-gray-400 text-sm">{item.description}</p>
                 <p className="text-green-400 font-bold mt-2">₹{item.price}</p>
                 <button
-                  onClick={() => dispatch(addToCart({ itemId: id, item }))}
+                  onClick={() => dispatch(addToCart({ id, item }))}
                   className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
                 >
                   Add to Cart
@@ -89,7 +89,9 @@ const UserPage = () => {
           <div
             key={rec.id}
             onClick={() => handleRecipeClick(rec.id)}
-            className="bg-gray-800 rounded-lg shadow-lg p-4 hover:shadow-xl transition cursor-pointer"
+            className={`bg-gray-800 rounded-lg shadow-lg p-4 transition-shadow duration-300 cursor-pointer hover:shadow-xl ${
+              expandedRecipeId === rec.id ? "shadow-2xl" : ""
+            }`}
           >
             {rec.imageUrl && (
               <img
@@ -99,12 +101,18 @@ const UserPage = () => {
               />
             )}
             <h3 className="text-xl font-semibold text-white">{rec.name}</h3>
-            {expandedRecipeId === rec.id && (
-              <>
-                <p className="text-gray-400 text-sm mt-2">{rec.description}</p>
-                <p className="text-green-400 font-bold mt-2">₹{rec.price}</p>
-              </>
-            )}
+            <div
+              className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                expandedRecipeId === rec.id ? "max-h-[500px] mt-2" : "max-h-0"
+              }`}
+            >
+              {expandedRecipeId === rec.id && (
+                <>
+                  <p className="text-gray-400 text-sm mt-2">{rec.description}</p>
+                  <p className="text-green-400 font-bold mt-2">₹{rec.price}</p>
+                </>
+              )}
+            </div>
           </div>
         ))}
       </div>
