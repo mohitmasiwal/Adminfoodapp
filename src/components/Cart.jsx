@@ -186,7 +186,7 @@ const Cart = () => {
           ) : (
             <div className="space-y-6">
               {Object.entries(userOrders)
-                .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt)) // newest first
+                .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt))  
                 .map(([orderId, order]) => (
                   <div
                     key={orderId}

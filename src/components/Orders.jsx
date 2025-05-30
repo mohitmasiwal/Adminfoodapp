@@ -15,7 +15,6 @@ const Orders = () => {
         return;
       }
 
-      // Each key is orderId (timestamp), each value is the order object
       const formattedOrders = Object.entries(data).map(([orderId, orderData]) => ({
         orderId,
         ...orderData,
@@ -24,7 +23,7 @@ const Orders = () => {
       setAllOrders(formattedOrders);
     });
 
-    return () => unsubscribe(); // cleanup listener
+    return () => unsubscribe();
   }, []);
 
   const handleStatusUpdate = async (orderId, newStatus) => {
@@ -33,30 +32,43 @@ const Orders = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-center">All Orders</h2>
+    <div className="p-6 bg-gray-900 min-h-screen">
+      <h2 className="text-3xl font-bold mb-6 text-center text-white">All Orders</h2>
       {allOrders.length === 0 ? (
-        <p className="text-center text-gray-600">No orders found.</p>
+        <p className="text-center text-gray-400">No orders found.</p>
       ) : (
         <div className="space-y-6">
           {allOrders.map((order) => (
-            <div key={order.orderId} className="bg-white shadow p-4 rounded">
-              <p className="font-semibold">User ID: {order.uid}</p>
-              <p>Order ID: {order.orderId}</p>
-              <p>
-                Status:{" "}
-                <span className="font-medium capitalize">{order.status}</span>
+            <div
+              key={order.orderId}
+              className="bg-gray-800 shadow-md rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-colors duration-300"
+            >
+              {/* Name and Phone Number at top, both bold */}
+              <p className="text-white font-bold text-lg">
+                {order.name || "Unknown Name"}
               </p>
-              <p>
+              <p className="text-gray-300 font-semibold mb-4">
+                Phone: {order.phone || "Unknown Phone"}
+              </p>
+
+              <p className="font-semibold text-gray-200">User ID: <span className="font-normal">{order.uid}</span></p>
+              <p className="text-gray-300">Order ID: {order.orderId}</p>
+
+              <p className="mt-2">
+                Status:{" "}
+                <span className="font-medium capitalize text-blue-400">{order.status}</span>
+              </p>
+              <p className="text-gray-400">
                 Created At:{" "}
                 {order.createdAt
                   ? new Date(order.createdAt).toLocaleString()
                   : "Unknown"}
               </p>
+
               <div className="mt-4">
-                <p className="font-semibold">Items:</p>
+                <p className="font-semibold text-gray-200 mb-2">Items:</p>
                 {order.items ? (
-                  <ul className="list-disc pl-6">
+                  <ul className="list-disc pl-6 text-gray-300">
                     {Object.entries(order.items).map(([id, { item, quantity }]) => (
                       <li key={id}>
                         {item?.name || "Unknown"} - Qty: {quantity}
@@ -64,14 +76,15 @@ const Orders = () => {
                     ))}
                   </ul>
                 ) : (
-                  <p>No items in this order.</p>
+                  <p className="text-gray-400">No items in this order.</p>
                 )}
               </div>
-              <div className="mt-4">
+
+              <div className="mt-6">
                 <select
                   onChange={(e) => handleStatusUpdate(order.orderId, e.target.value)}
                   defaultValue={order.status}
-                  className="p-2 border rounded"
+                  className="w-full md:w-64 p-2 rounded bg-gray-700 border border-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="pending">Pending</option>
                   <option value="preparing">Preparing</option>

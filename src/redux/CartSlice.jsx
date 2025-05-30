@@ -93,7 +93,7 @@ export const {
   setorder,
 } = cartSlice.actions;
 
-export const placeOrder = ({ uid, items }) => async () => {
+export const placeOrder = ({ uid, items ,name,phone }) => async () => {
   const db = getDatabase();
   const orderRef = ref(db, `orders/${Date.now()}`);
   const orderData = {
@@ -101,6 +101,7 @@ export const placeOrder = ({ uid, items }) => async () => {
     items,
     status: "pending",
     createdAt: new Date().toISOString(),
+    name,phone
   };
   await set(orderRef, orderData);
 };
